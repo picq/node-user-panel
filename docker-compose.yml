@@ -1,0 +1,41 @@
+version: '2'
+
+services:
+
+  app:
+    build: .
+    command: ["npm", "--help"]
+    volumes:
+      - ./:/app
+    environment:
+      - APP_PORT=3000
+      - APP_HOST=0.0.0.0
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://user:user.123@postgres/app
+      - DATABASE_DB=app
+      - DATABASE_USER=user
+      - DATABASE_PASSWORD=user.123
+      - SECRET_KEY=super-secret-key
+    depends_on:
+      - postgres
+    ports:
+      - 3000:3000
+
+  postgres:
+    image: postgres:9.6
+    restart: always
+    environment:
+      - POSTGRES_DB=app
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=user.123
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+
+volumes:
+  postgres:
+    driver: local
